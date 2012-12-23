@@ -1,0 +1,18 @@
+%%-*- mode: erlang -*-
+{application, blathery,
+ [
+  {description, "blathery"},
+  {vsn, "1"},
+  {modules, []},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  inets,
+                  crypto,
+                  mochiweb,
+                  webmachine
+                 ]},
+  {mod, { blathery_app, []}},
+  {env, []}
+ ]}.
