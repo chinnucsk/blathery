@@ -2,7 +2,7 @@
              [{description,"blathery"},
               {vsn,"1"},
               {modules,[api_resource,blathery,blathery_app,blathery_resource,
-                        blathery_sup,static_resource]},
+                        blathery_sup,message_store,static_resource]},
               {registered,[]},
               {applications,[kernel,stdlib,inets,crypto,mochiweb,webmachine]},
               {mod,{blathery_app,[]}},

@@ -7,7 +7,9 @@
 
 -include_lib("webmachine/include/webmachine.hrl").
 
-init([]) -> {ok, undefined}.
+init([]) -> 
+  message_store:init_tables(),
+  {ok, undefined}.
 
 to_html(ReqData, State) ->
     {get_start_page(), ReqData, State}.

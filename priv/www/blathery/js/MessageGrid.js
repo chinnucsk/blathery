@@ -22,7 +22,7 @@ Ext.define('Blathery.MessageGrid', {
       autoLoad: true,
       proxy: {
         type: 'ajax',
-        url: 'api',
+        url: 'api/messages',
         reader: { type: 'json' }
       }
     });

@@ -21,6 +21,7 @@ start_link() ->
     ensure_started(inets),
     ensure_started(crypto),
     ensure_started(mochiweb),
+    ensure_started(mnesia),
     application:set_env(webmachine, webmachine_logger_module, 
                         webmachine_logger),
     ensure_started(webmachine),
@@ -32,6 +33,7 @@ start() ->
     ensure_started(inets),
     ensure_started(crypto),
     ensure_started(mochiweb),
+    ensure_started(mnesia),
     application:set_env(webmachine, webmachine_logger_module, 
                         webmachine_logger),
     ensure_started(webmachine),
@@ -43,6 +45,7 @@ stop() ->
     Res = application:stop(blathery),
     application:stop(webmachine),
     application:stop(mochiweb),
+    application:stop(mnesia),
     application:stop(crypto),
     application:stop(inets),
     Res.
