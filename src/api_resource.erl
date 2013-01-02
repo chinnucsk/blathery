@@ -15,24 +15,20 @@ content_types_accepted(RD, Ctx) ->
   {[{"application/json", from_json}], RD, Ctx}.
 
 process_post(RD, Ctx) ->
-  A = wrq:req_body(RD),
-  io:format("******** Got the req_body from the ReqData: ~p~n", [A]),
+  ReqBody = wrq:req_body(RD),
+  io:format("******** Got the req_body from the ReqData: ~p~n", [ReqBody]),
 
-  B = mochiweb_util:parse_qs(A),
-  io:format("******** Parsed qs using mochiweb_util: ~p~n", [B]),
-  [{JsonDoc, _}] = B,
+  QS = mochiweb_util:parse_qs(ReqBody),
+  io:format("******** Parsed qs using mochiweb_util: ~p~n", [QS]),
 
-  {struct, Doc} = mochijson2:decode(JsonDoc),
-  io:format("The decoded doc is:~n~p~n", [Doc]),
-  Sender = proplists:get_value(<<"sender">>, Doc, undefined),
-  Message = proplists:get_value(<<"message">>, Doc, undefined),
+  Sender = list_to_binary(proplists:get_value("sender", QS, undefined)),
+  Message = list_to_binary(proplists:get_value("message", QS, undefined)),
   io:format("Recieved a message from: ~p with contents: ~p ~n", [Sender, Message]),
   
   Date = calendar:universal_time(),
   message_store:store_message(Date, Sender, Message),
 
-  NewDoc = mochijson2:encode({struct, Doc}),
-  Resp = wrq:set_resp_body(NewDoc, RD),
+  Resp = wrq:set_resp_body("message submitted", RD),
   {true, Resp, Ctx}.
 
 to_json(RD, Ctx) ->

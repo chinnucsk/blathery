@@ -47,6 +47,10 @@ Ext.define('Blathery.MessageGrid', {
 
     this.callParent(arguments);
 
+  },
+
+  onMessageSubmit:function() {
+    this.store.reload();
   }
 
 });
