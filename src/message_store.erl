@@ -1,15 +1,19 @@
 -module(message_store).
 
--export([init_tables/0, store_message/3]).
+-export([init_tables/0, store_message/3, retrieve_messages_before/1]).
+
+-include_lib("stdlib/include/qlc.hrl").
 
 -record(blathery_messages, {date,
                             name,
                             message}).
 
 init_tables() ->
-  mnesia:create_table(blathery_messages, [{attributes, record_info(fields, blathery_messages)}]).
+  mnesia:create_table(blathery_messages, [{attributes, record_info(fields, blathery_messages)},
+                                          {type, bag}]).
 
 store_message(Date, Sender, Message) ->
+  io:format("Storing message: date=~p , sender=~p , message=~p~n", [Date, Sender, Message]),
   Num_Sec = calendar:datetime_to_gregorian_seconds(Date),
   F = fun() ->
     mnesia:write(#blathery_messages{date=Num_Sec,
@@ -18,8 +22,17 @@ store_message(Date, Sender, Message) ->
   end,
   mnesia:activity(transaction, F).
 
-retrieve_messages_after(Date) ->
-  undefined.
+retrieve_messages_before(Date) ->
+  Num_Sec = calendar:datetime_to_gregorian_seconds(Date),
+  F = fun() ->
+    qlc:eval(qlc:q(
+      [{struct, [{name, S},{chat, M}]} || #blathery_messages{date=D,
+                                   name=S,
+                                   message=M} <- mnesia:table(blathery_messages),
+                 D =< Num_Sec]
+    ))
+  end,
+  mnesia:activity(transaction, F).
 
 retrieve_last_n_messages(N) ->
   undefined.
