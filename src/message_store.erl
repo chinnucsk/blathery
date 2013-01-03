@@ -26,13 +26,15 @@ retrieve_messages_before(Date) ->
   Num_Sec = calendar:datetime_to_gregorian_seconds(Date),
   F = fun() ->
     qlc:eval(qlc:q(
-      [{struct, [{name, S},{chat, M}]} || #blathery_messages{date=D,
+      [{struct, [{name, S},{chat, M},{time, D}]} || #blathery_messages{date=D,
                                    name=S,
                                    message=M} <- mnesia:table(blathery_messages),
                  D =< Num_Sec]
     ))
   end,
-  mnesia:activity(transaction, F).
+  %lists:sort([{V,K} || {K,V} <- dict:to_list(mnesia:activity(transaction, F))]).
+  SortFun = fun({_, [_,_,{time,Val1}]}, {_, [_,_,{time,Val2}]}) -> Val1 < Val2 end,
+  lists:sort(SortFun, mnesia:activity(transaction, F)).
 
 retrieve_last_n_messages(N) ->
   undefined.
