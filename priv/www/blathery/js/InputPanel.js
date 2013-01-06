@@ -20,34 +20,44 @@ Ext.define('Blathery.InputPanel', {
         }, {
           xtype: 'textfield',
           fieldLabel: 'Message',
+          enableKeyEvents: true,
           labelWidth: 50,
-          width: 300
+          width: 300,
+          listeners: {
+            specialkey: function(field, e){
+              if (e.getKey() == e.ENTER) {
+                this.handleSubmit();
+              }
+            },
+            scope: this
+          }
         }
       ],
       buttons: [ { 
         text: 'Submit',
-        handler: function() {
-          var name = this.items.getAt(0).getValue();
-          var msg = this.items.getAt(1).getValue();
-          Ext.Ajax.request({
-            url: 'api/messages',
-            params: {
-              sender: name,
-              message: msg
-            },
-            success: function(response) {
-              this.items.getAt(0).setRawValue('');
-              this.items.getAt(1).setRawValue('');
-              this.fireEvent('messageSubmit')
-            },
-            scope: this
-          });
-        },
+        handler: this.handleSubmit,
         scope: this 
       } ]
     });
 
     this.callParent(arguments);
+  },
+
+  handleSubmit: function() {
+    var name = this.items.getAt(0).getValue();
+    var msg = this.items.getAt(1).getValue();
+    Ext.Ajax.request({
+      url: 'api/messages',
+      params: {
+        sender: name,
+        message: msg
+      },
+      success: function(response) {
+        this.items.getAt(1).setRawValue('');
+        this.fireEvent('messageSubmit')
+      },
+      scope: this
+    });
   }
 
 });
