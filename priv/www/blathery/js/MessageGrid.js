@@ -14,7 +14,7 @@ Ext.define('Blathery.MessageGrid', {
         type: 'ajax',
         reader: 'json'
       },
-      fields: [ 'name', 'chat' ]
+      fields: [ 'name', 'chat', { name: 'time', type: 'date', dateFormat: 'time'} ]
     });
 
     var store = Ext.create('Ext.data.Store', {
@@ -30,6 +30,14 @@ Ext.define('Blathery.MessageGrid', {
     Ext.apply(this, {
       store: store,
       columns: [
+            {
+              text: 'Time',
+              flex: 1,
+              sortable: false,
+              dataIndex: 'time',
+              xtype: 'datecolumn',
+              format: 'g:i a'
+            },      
             {
                 text     : 'Name',
                 flex     : 1,

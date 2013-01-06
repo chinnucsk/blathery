@@ -25,8 +25,7 @@ process_post(RD, Ctx) ->
   Message = list_to_binary(proplists:get_value("message", QS, undefined)),
   io:format("Recieved a message from: ~p with contents: ~p ~n", [Sender, Message]),
   
-  Date = calendar:universal_time(),
-  message_store:store_message(Date, Sender, Message),
+  message_store:store_message(now(), Sender, Message),
 
   Resp = wrq:set_resp_body("message submitted", RD),
   {true, Resp, Ctx}.

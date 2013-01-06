@@ -12,9 +12,11 @@ init_tables() ->
   mnesia:create_table(blathery_messages, [{attributes, record_info(fields, blathery_messages)},
                                           {type, bag}]).
 
-store_message(Date, Sender, Message) ->
-  io:format("Storing message: date=~p , sender=~p , message=~p~n", [Date, Sender, Message]),
-  Num_Sec = calendar:datetime_to_gregorian_seconds(Date),
+store_message(Time, Sender, Message) ->
+  io:format("Storing message: date=~p , sender=~p , message=~p~n", [Time, Sender, Message]),
+
+  {MegaSecs,Secs,MicroSecs} = Time,
+  Num_Sec = (MegaSecs*1000000 + Secs)*1000000 + MicroSecs,
   F = fun() ->
     mnesia:write(#blathery_messages{date=Num_Sec,
                                     name=Sender,
@@ -23,16 +25,17 @@ store_message(Date, Sender, Message) ->
   mnesia:activity(transaction, F).
 
 retrieve_messages_before(Date) ->
-  Num_Sec = calendar:datetime_to_gregorian_seconds(Date),
+  {MegaSecs,Secs,MicroSecs} = now(),
+  Num_Sec = (MegaSecs*1000000 + Secs)*1000000 + MicroSecs,
   F = fun() ->
     qlc:eval(qlc:q(
-      [{struct, [{name, S},{chat, M},{time, D}]} || #blathery_messages{date=D,
+      [{struct, [{name, S},{chat, M},{time, D div 1000}]} || #blathery_messages{date=D,
                                    name=S,
                                    message=M} <- mnesia:table(blathery_messages),
                  D =< Num_Sec]
     ))
   end,
-  %lists:sort([{V,K} || {K,V} <- dict:to_list(mnesia:activity(transaction, F))]).
+  
   SortFun = fun({_, [_,_,{time,Val1}]}, {_, [_,_,{time,Val2}]}) -> Val1 < Val2 end,
   lists:sort(SortFun, mnesia:activity(transaction, F)).
 
