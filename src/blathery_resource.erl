@@ -20,6 +20,7 @@ get_start_page() ->
       "<title>Welcome to Blathery!</title>"
       "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/extjs/resources/css/ext-all.css\" />"
       "<script type=\"text/javascript\" src=\"static/extjs/ext-all-debug-w-comments.js\"></script>"
+      "<script type=\"text/javascript\" src=\"static/blathery/js/MessagePoller.js\"></script>"
       "<script type=\"text/javascript\" src=\"static/blathery/js/MessageGrid.js\"></script>"
       "<script type=\"text/javascript\" src=\"static/blathery/js/InputPanel.js\"></script>"
       "<script type=\"text/javascript\" src=\"static/blathery/js/Application.js\"></script>"

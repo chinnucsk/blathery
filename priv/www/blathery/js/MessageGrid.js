@@ -3,7 +3,8 @@ Ext.define('Blathery.MessageGrid', {
   
   viewConfig: {
     stripeRows: true,
-    enableTextSelection: true
+    enableTextSelection: true,
+    loadMask: false
   },
 
   initComponent: function() {
@@ -52,6 +53,17 @@ Ext.define('Blathery.MessageGrid', {
             }
         ]
     });
+
+    var poller = Ext.create('Blathery.MessagePoller', {
+      pollFn: function(callbk, scp) {
+        this.store.on({
+          load: {fn: callbk, scope: scp, single: true}
+        });
+        this.store.reload();
+      },
+      scope: this
+    });
+    poller.start();
 
     this.callParent(arguments);
 
